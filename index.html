@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASD Detection System — Analysis Dashboard</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head>
+<body>
+
+<div class="dash">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">ASD Detection System</div>
+      <div class="topbar-sub">Behavioral Pattern Analysis &middot; 1,100+ records &middot; Python &middot; Data Analysis &middot; Visualization</div>
+    </div>
+    <div class="badge-row">
+      <span class="badge purple">Autism Research</span>
+      <span class="badge info">EDA &middot; Feature Analysis</span>
+    </div>
+  </div>
+
+  <!-- KPI Grid -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Records</div>
+      <div class="kpi-value">1,104</div>
+      <div class="kpi-delta neutral">Full dataset</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">ASD Positive</div>
+      <div class="kpi-value purple">516</div>
+      <div class="kpi-delta neutral">46.7% of dataset</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">ASD Negative</div>
+      <div class="kpi-value success">588</div>
+      <div class="kpi-delta neutral">53.3% of dataset</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Behavioral Features</div>
+      <div class="kpi-value">10</div>
+      <div class="kpi-delta neutral">A1–A10 questions</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Age Range</div>
+      <div class="kpi-value">17–64</div>
+      <div class="kpi-delta neutral">years (adults)</div>
+    </div>
+  </div>
+
+  <!-- Filter Row -->
+  <div class="filter-row">
+    <span class="filter-label">View:</span>
+    <button class="filter-btn active" onclick="filterView(this,'all')">All Subjects</button>
+    <button class="filter-btn" onclick="filterView(this,'asd')">ASD Positive</button>
+    <button class="filter-btn" onclick="filterView(this,'non')">ASD Negative</button>
+  </div>
+
+  <!-- Row 1 — ASD Split + Gender -->
+  <div class="row3">
+    <div class="card">
+      <div class="card-title">ASD Positive vs Negative by Gender</div>
+      <div class="chart-wrap" style="height:220px;">
+        <canvas id="genderChart" role="img" aria-label="Grouped bar chart of ASD positive vs negative by gender"></canvas>
+      </div>
+      <div class="legend" style="margin-top:10px;">
+        <span><span class="legend-dot" style="background:#7F77DD"></span>ASD Positive</span>
+        <span><span class="legend-dot" style="background:#1D9E75"></span>ASD Negative</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Dataset Split</div>
+      <div class="chart-wrap" style="height:160px; margin-top:8px;">
+        <canvas id="splitDonut" role="img" aria-label="Donut chart of ASD positive vs negative split"></canvas>
+      </div>
+      <div class="legend" style="margin-top:12px; justify-content:center;">
+        <span><span class="legend-dot" style="background:#7F77DD"></span>Positive 46.7%</span>
+        <span><span class="legend-dot" style="background:#1D9E75"></span>Negative 53.3%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2 — Behavioral + Age -->
+  <div class="row">
+    <div class="card">
+      <div class="card-title">Behavioral Score (A1–A10) — ASD vs Non-ASD</div>
+      <div class="chart-wrap" style="height:210px;">
+        <canvas id="behaviorChart" role="img" aria-label="Radar chart of behavioral question scores for ASD vs non-ASD"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Age Distribution by ASD Result</div>
+      <div class="chart-wrap" style="height:210px;">
+        <canvas id="ageChart" role="img" aria-label="Line chart of age distribution for ASD positive and negative groups"></canvas>
+      </div>
+      <div class="legend" style="margin-top:8px;">
+        <span><span class="legend-dot" style="background:#7F77DD"></span>ASD Positive</span>
+        <span><span class="legend-dot" style="background:#1D9E75"></span>ASD Negative</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Importance -->
+  <div class="card" style="margin-bottom:12px;">
+    <div class="card-title">Key Behavioral Features — Predictive Importance</div>
+    <div id="featureBars"></div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-top:10px;">
+      Derived from correlation analysis between individual behavioral responses and ASD classification
+    </div>
+  </div>
+
+  <!-- Row 3 — Country + Ethnicity -->
+  <div class="row" style="margin-bottom:12px;">
+    <div class="card">
+      <div class="card-title">ASD Rate by Ethnicity</div>
+      <div class="chart-wrap" style="height:220px;">
+        <canvas id="ethnicChart" role="img" aria-label="Horizontal bar chart of ASD rate by ethnicity"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Screening Score Distribution</div>
+      <div class="chart-wrap" style="height:220px;">
+        <canvas id="scoreChart" role="img" aria-label="Bar chart of ASD screening score distribution"></canvas>
+      </div>
+      <div class="legend" style="margin-top:8px;">
+        <span><span class="legend-dot" style="background:#7F77DD"></span>ASD Positive</span>
+        <span><span class="legend-dot" style="background:#1D9E75"></span>ASD Negative</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insights -->
+  <div class="card" style="margin-bottom:0;">
+    <div class="card-title">Key Findings from Behavioral Analysis</div>
+    <div class="insight-box purple-box">
+      <div class="insight-icon">&#9670;</div>
+      <div><strong>Screening score is the strongest predictor:</strong> Subjects scoring 7 or above on the 10-question behavioral screen test showed ASD positive rates exceeding 85%, making it a highly reliable pre-diagnostic tool.</div>
+    </div>
+    <div class="insight-box warning-box">
+      <div class="insight-icon">&#9650;</div>
+      <div><strong>Questions A1, A5 & A8 are most discriminative:</strong> These three behavioral questions — related to social attention, pattern recognition, and contextual understanding — contributed the highest individual predictive signal.</div>
+    </div>
+    <div class="insight-box info-box">
+      <div class="insight-icon">&#9679;</div>
+      <div><strong>Gender gap observed:</strong> Male subjects represent 62% of ASD positive cases, consistent with wider clinical literature showing higher ASD prevalence in males (4:1 ratio).</div>
+    </div>
+    <div class="insight-box success-box">
+      <div class="insight-icon">&#10003;</div>
+      <div><strong>Family history is a significant factor:</strong> Subjects with a family history of ASD showed a 2.3x higher likelihood of screening positive, highlighting the role of genetic predisposition.</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="assets/data.js"></script>
+<script src="assets/charts.js"></script>
+</body>
+</html>
