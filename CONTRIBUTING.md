@@ -11,7 +11,7 @@ Click the **Fork** button at the top right of this page.
 
 ### 2. Clone your fork
 ```bash
-git clone https://github.com/YOUR_USERNAME/asd-detection.git
+git clone https://github.com/shivam-saurav-tech/asd-detection.git
 cd asd-detection
 ```
 
