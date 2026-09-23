@@ -79,7 +79,7 @@ asd-detection/
 
 ```bash
 # Clone the repository
-git clone https://github.com/exclamedvinay/asd-detection.git
+git clone https://github.com/shivam-saurav-tech/asd-detection.git
 cd asd-detection
 
 # Install dependencies
