@@ -26,70 +26,80 @@ Autism Spectrum Disorder affects an estimated 1 in 100 people worldwide. Early a
 
 ```
 asd-detection/
-├── data/
-│   ├── raw/                  # Original unmodified dataset
-│   └── processed/            # Cleaned and preprocessed data
-├── notebooks/
-│   └── eda.ipynb             # Exploratory Data Analysis notebook (add yours here)
-├── outputs/
-│   └── figures/              # Generated charts and plots
 ├── docs/
-│   └── findings.md           # Key findings and observations
-├── requirements.txt          # Python dependencies
+│   └── Project_Report.docx                 # problem statement, methodology, results template, discussion, limitations
+├── notebooks/
+│   └── ASD_Pipeline & Framework.ipynb      # pipeline runnable (data -> features -> training -> evaluation -> saved model)
 ├── .gitignore
 ├── CONTRIBUTING.md
-└── README.md
+├── LICENSE
+├── README.md
+└──requirements.txt                         # Python dependencies
 ```
 
 ---
 
 ## 📊 What's Been Done So Far
 
-- Loaded and cleaned the ASD behavioral screening dataset (1,104 records)
-- Handled missing values, encoded categorical variables
-- Performed feature-level correlation analysis across all 10 behavioral questions (A1–A10)
-- Identified top discriminative features: **A1, A5, A8** (social attention, pattern recognition, contextual understanding)
-- Visualised age distribution, gender split, ethnicity breakdown, and screening score distribution
-- Observed that subjects scoring **≥7 on the screening test** show ASD positive rates above 85%
-- Found family history increases likelihood of positive screening by **2.3×**
+Open `notebooks/ASD_Pipeline & Framework.ipynb` in Jupyter / Colab and run all cells top
+to bottom. On first run it will:
+
+1. Download ABIDE subjects and the Schaefer/AAL atlases.
+2. Extract and cache connectivity features to `feature_cache/` (so re-runs are fast).
+3. Run 10-fold cross-validation and print per-fold accuracy/AUC.
+4. Train a final model on the full CV portion and evaluate once on a held-out test set.
+5. Save the trained model, scaler, and PCA transform to `artifacts/`.
+6. Report permutation feature importance for the final model.
 
 ---
 
 ## 💡 Key Findings
 
-- **Screening score ≥ 7** is the strongest single predictor of ASD classification
-- **Male subjects** account for 62% of ASD positive cases — consistent with the known 4:1 clinical ratio
-- **A1, A5, A8** behavioral questions carry the highest predictive signal individually
-- **Family history** of ASD is a statistically significant risk factor
+- **Features:** Regional time-series extracted with two brain atlases (Schaefer-2018, 100 ROIs, and AAL), converted to tangent-space functional connectivity matrices (`nilearn.connectome.ConnectivityMeasure`), and fused into a single feature vector per subject.
+- **Model:** A compact feed-forward network (`Linear → LayerNorm → ReLU → Dropout → Linear → LayerNorm → ReLU → Linear`) trained with `BCEWithLogitsLoss` (class-imbalance weighted) and Adam.
+- **Evaluation protocol:** A stratified hold-out test set is split off before any cross-validation; 10-fold stratified CV is run on the remaining data for a robust performance estimate; the final model is retrained on the full CV portion and scored once on the untouched hold-out set.
 
 ---
+## 🎯 Results
 
+| Metric | Cross-validation (mean ± std) | Hold-out test set |
+|---|---|---|
+| Accuracy | 66.67% (+/- 15.52) | 76.00% |
+| AUC | 0.763 (+/- 0.156) | 0.819 |
+
+---
 ## 🔜 What's Coming Next
 
-- [ ] Build and evaluate classification models (Logistic Regression, Random Forest, XGBoost)
-- [ ] Perform cross-validation and hyperparameter tuning
-- [ ] Generate ROC-AUC curves and confusion matrices
-- [ ] Build an interactive prediction interface (Streamlit or Flask)
-- [ ] Add SHAP-based feature importance explanation
+- [ ] Scale to the full ABIDE release and/or combine with ABIDE II.
+- [ ] Nested cross-validation for proper hyperparameter search.
+- [ ] Generate ROC-AUC curves and confusion matrices.
+- [ ] Map important PCA components back to anatomical connectivity edges for clinical interpretability.
+- [ ] Package the saved model behind a small inference API (e.g. AWS SageMaker endpoint).
 - [ ] Write full project report in `docs/findings.md`
 
 ---
 
 ## 🚀 How to Run
 
+**1. Clone the repository**
 ```bash
-# Clone the repository
 git clone https://github.com/shivam-saurav-tech/asd-detection.git
 cd asd-detection
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Add your dataset to data/raw/ then open the notebook
-jupyter notebook notebooks/eda.ipynb
 ```
 
-**Dataset:** [ASD Screening Data — UCI / Kaggle](https://www.kaggle.com/datasets/faizunnabi/autism-screening)
+**2. Create virtual environment**
+```bash
+python -m venv venv
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # Mac/Linux
+```
+
+**3. Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+**Dataset :** [ABIDE (Autism Brain Imaging Data Exchange)](http://fcon_1000.projects.nitrc.org/indi/abide/), fetched via `nilearn.datasets.fetch_abide_pcp` (C-PAC preprocessing pipeline).
 
 ---
 
@@ -105,6 +115,21 @@ jupyter notebook notebooks/eda.ipynb
 
 ---
 
+## 🚫 Known limitations
+
+Stated here deliberately, as they're relevant to how the results should be read:
+
+- Trained on 200 of ABIDE's ~1,100+ available subjects; a larger sample would give a
+  more generalizable estimate.
+- Threshold tuning uses an internal validation split per fold rather than nested
+  cross-validation; hyperparameters (PCA components, learning rate, epochs) were set
+  manually rather than searched.
+- No external dataset validation (e.g. training on ABIDE I, testing on ABIDE II).
+- Interpretability is limited to permutation importance on PCA components, not yet
+  mapped back to specific brain regions/connections.
+
+  ---
+
 ## 🤝 Contributing
 
 This project is open to contributions! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request.
@@ -119,10 +144,10 @@ This project is for **educational and research purposes only**. It is not a clin
 
 ## 👤 Author
 
-- Vinay Singh : [@exclamedvinay](https://github.com/exclamedvinay)
 - Shivam Saurav : [shivam-saurav-tech](https://github.com/shivam-saurav-tech)
+- Vinay Singh : [@exclamedvinay](https://github.com/exclamedvinay)
 ---
 
 ## 📄 License
 
-MIT License — free to use, modify, and distribute with attribution.
+MIT — see [LICENSE](LICENSE).
