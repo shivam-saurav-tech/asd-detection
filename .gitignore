@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.env
+venv/
+env/
+
+# Jupyter (only ignore checkpoints, NOT the notebooks themselves)
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Data files (don't commit raw data)
+data/raw/
+data/processed/
+*.csv
+*.xlsx
+*.json
+
+# Output figures (regenerate from code)
+outputs/figures/
+*.png
+*.jpg
+*.pdf
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
